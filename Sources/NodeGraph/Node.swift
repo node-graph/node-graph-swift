@@ -38,55 +38,49 @@ enum NodeInputTrigger: Int, Codable {
         24
 
  */
-//protocol Node {
-//    /**
-//     Specifies what inputs need to be set in order for the node to process.
-//     */
-//    var inputTrigger: NodeInputTrigger { get }
-//
-//    /**
-//     The inputs of this node, inputs do not reference upstream nodes but keeps a
-//     result from an upstream node that this node can use when @c -process is called.
-//     */
-//    var inputs: Set<NodeInput> { get }
-//
-//    /**
-//     All downstream connections out from this node. When -process is run the result
-//     will be fed to each NodeOutput.
-//     */
-//    var outputs: Set<NodeOutput> { get }
-//
-//    /**
-//     Processes the node with the current values stored in the inputs of this node.
-//     All outputs will be triggered with the result of this node's operation.
-//
-//     This method will also be triggered internally based on the inputTrigger specified by the node.
-//     */
-//    func process()
-//
-//    /**
-//     Cancels the current processing and stops the result from flowing to any
-//     downstream nodes. Also recursively cancels any downstream connections.
-//     */
-//    func cancel()
-//}
-//
-//extension Node {
-//
-//    func cancel() { }
-//
-//}
-//
-//
-//protocol DescribableNode {
-//    /**
-//     Human readable name of the node.
-//     */
-//    var nodeName: String? { get }
-//
-//    /**
-//     Describes what the node does or can be used for.
-//     */
-//    var nodeDescription: String? { get }
-//
-//}
+protocol Node: NodeInputDelegate {
+    associatedtype NodeInputType: NodeInputProtocol
+    associatedtype NodeOutputType: NodeOutputProtocol
+    /**
+     Specifies what inputs need to be set in order for the node to process.
+     */
+    var inputTrigger: NodeInputTrigger { get }
+
+    /**
+     The inputs of this node, inputs do not reference upstream nodes but keeps a
+     result from an upstream node that this node can use when @c -process is called.
+     */
+    var inputs: Set<NodeInputType> { get }
+
+    /**
+     All downstream connections out from this node. When -process is run the result
+     will be fed to each NodeOutput.
+     */
+    var outputs: Set<NodeOutputType> { get }
+
+    /**
+     Processes the node with the current values stored in the inputs of this node.
+     All outputs will be triggered with the result of this node's operation.
+
+     This method will also be triggered internally based on the inputTrigger specified by the node.
+     */
+    func process()
+
+    /**
+     Cancels the current processing and stops the result from flowing to any
+     downstream nodes. Also recursively cancels any downstream connections.
+     */
+    func cancel()
+}
+
+protocol DescribableNode: Node {
+    /**
+     Human readable name of the node.
+     */
+    var nodeName: String? { get }
+
+    /**
+     Describes what the node does or can be used for.
+     */
+    var nodeDescription: String? { get }
+}

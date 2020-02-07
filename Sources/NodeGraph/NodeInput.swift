@@ -12,7 +12,7 @@ protocol NodeInputDelegate: class {
 
  This class is well suited for subclassing so you can implement inputs for specific types.
 */
-protocol NodeInputProtocol: class {
+protocol NodeInputProtocol: class, Hashable {
     associatedtype ValueType: Equatable
     /**
      The current value of the input. The setter will run the validationBlock before
@@ -31,6 +31,7 @@ protocol NodeInputProtocol: class {
     var key: String? { get }
 }
 
+
 class NodeInput<InputType: Equatable>: NodeInputProtocol {
     typealias ValueType = InputType
 
@@ -47,7 +48,13 @@ class NodeInput<InputType: Equatable>: NodeInputProtocol {
         self.delegate = delegate
     }
 
+    //MARK: - Hashable
+
     static func == (lhs: NodeInput, rhs: NodeInput) -> Bool {
         return lhs === rhs
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(unsafeBitCast(self, to: Int.self))
     }
 }

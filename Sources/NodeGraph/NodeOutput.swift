@@ -5,7 +5,7 @@ signify what part of the result it carries.
 
 An output has connections as weak references to instances of NodeInput.
 */
-protocol NodeOutputProtocol: class { // TODO: Do we need the protocol?
+protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
     associatedtype ResultType: Equatable
     associatedtype NodeInputType: NodeInputProtocol
 
@@ -51,6 +51,16 @@ class NodeOutput<OutputType: Equatable>: NodeOutputProtocol {
         for connection in connections {
             connection.value = result
         }
+    }
+
+    //MARK: - Hashable
+
+    static func == (lhs: NodeOutput, rhs: NodeOutput) -> Bool {
+        return lhs === rhs
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(unsafeBitCast(self, to: Int.self))
     }
 }
 
