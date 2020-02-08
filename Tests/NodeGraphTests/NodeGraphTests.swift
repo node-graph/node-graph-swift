@@ -22,8 +22,8 @@ class AddNodeMock: Node {
     init() {
         inputs = Set()
         outputs = Set()
-
-        super.init()
+        inputTrigger = .all
+        
         inputs.insert(NodeInput<Int>(key: "lhs", delegate: self))
         inputs.insert(NodeInput<Int>(key: "rhs", delegate: self))
 
@@ -35,6 +35,12 @@ class AddNodeMock: Node {
         guard let lhs = (inputs.first(){ $0.key! == "lhs" })?.value else {
             return
         }
+        
+        guard let rhs = (inputs.first(){ $0.key! == "rhs" })?.value else {
+            return
+        }
+        
+        outputs.first!.send(result: lhs + rhs)
     }
 
     func cancel() {
