@@ -50,13 +50,13 @@ protocol Node: NodeInputDelegate {
      The inputs of this node, inputs do not reference upstream nodes but keeps a
      result from an upstream node that this node can use when @c -process is called.
      */
-    var inputs: Set<NodeInputType> { get }
+    var inputs: SimpleWeakSet<NodeInputType> { get }
 
     /**
      All downstream connections out from this node. When -process is run the result
      will be fed to each NodeOutput.
      */
-    var outputs: Set<NodeOutputType> { get }
+    var outputs: SimpleWeakSet<NodeOutputType> { get }
 
     /**
      Processes the node with the current values stored in the inputs of this node.
