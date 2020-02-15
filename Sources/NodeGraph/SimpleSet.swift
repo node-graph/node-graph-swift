@@ -41,6 +41,11 @@ class SimpleWeakSet<ItemType: AnyObject & Equatable>: SimpleSet {
         return _items.count
     }
     
+    var first: ItemType? {
+        clean()
+        return _items.first?.item
+    }
+    
     func add(item: ItemType) {
         clean()
         guard !(_items.contains { $0.item == item }) else {
@@ -52,6 +57,29 @@ class SimpleWeakSet<ItemType: AnyObject & Equatable>: SimpleSet {
     func remove(item: ItemType) {
         clean()
         _items.removeAll { $0.item == item }
+    }
+    
+    func first(_ findClosure: (_ item: ItemType) -> Bool) -> ItemType? {
+        clean()
+        for wrapper in _items {
+            if let item = wrapper.item, findClosure(item) {
+                return item
+            }
+        }
+        
+        return nil
+    }
+    
+    func reduce<Result>(_ initialResult: Result, _ nextPartialResult: (Result, ItemType) throws -> Result) rethrows -> Result {
+        var result = initialResult
+        clean()
+        for wrapper in _items {
+            if let item = wrapper.item {
+                result = try nextPartialResult(result, item)
+            }
+        }
+        
+        return result
     }
     
     private func clean() {
