@@ -15,19 +15,19 @@ class AddNodeMock: Node {
 
     var inputTrigger: NodeInputTrigger
 
-    var inputs: Set<NodeInput<Int>>
+    var inputs: SimpleWeakSet<NodeInput<Int>>
 
-    var outputs: Set<NodeOutput<Int>>
+    var outputs: SimpleWeakSet<NodeOutput<Int>>
 
     init() {
-        inputs = Set()
-        outputs = Set()
+        inputs = SimpleWeakSet<NodeInput<Int>>()
+        outputs = SimpleWeakSet<NodeOutput<Int>>()
         inputTrigger = .all
         
-        inputs.insert(NodeInput<Int>(key: "lhs", delegate: self))
-        inputs.insert(NodeInput<Int>(key: "rhs", delegate: self))
-
-        outputs.insert(NodeOutput<Int>())
+        inputs.add(item: NodeInput<Int>(key: "lhs", delegate: self))
+        inputs.add(item: NodeInput<Int>(key: "rhs", delegate: self))
+        
+        outputs.add(item: NodeOutput<Int>())
     }
 
     func process() {
@@ -48,6 +48,7 @@ class AddNodeMock: Node {
     }
 
     func nodeInputDidUpdate<Input>(_: Input, value: Any?) where Input : NodeInputProtocol {
+        
         let shouldProcess = inputs.reduce(true) { (result, input) -> Bool in
             return result && input.value != nil
         }
