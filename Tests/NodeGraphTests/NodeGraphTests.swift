@@ -20,8 +20,8 @@ class AddNodeMock: Node {
     var outputs: SimpleWeakSet<NodeOutput<Int>>
 
     init() {
-        inputs = SimpleWeakSet<NodeInput<Int>>()
-        outputs = SimpleWeakSet<NodeOutput<Int>>()
+        inputs = SimpleWeakSet<NodeInput>()
+        outputs = SimpleWeakSet<NodeOutput>()
         inputTrigger = .all
         
         inputs.add(item: NodeInput<Int>(key: "lhs", delegate: self))
