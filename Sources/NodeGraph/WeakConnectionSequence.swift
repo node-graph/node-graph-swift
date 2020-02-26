@@ -27,14 +27,40 @@ class WeakConnectionSequence<T: AnyObject> {
     
     fileprivate var connections = [ConnectionWrapper]()
     
+    let enforceUniqueness: Bool
+    
     var count: Int {
         cleanUpConnections()
         return connections.count
     }
     
-    func addConnection(_ connection: T) {
+    init() {
+        enforceUniqueness = false
+    }
+    
+    init(enforceUniqueness: Bool) {
+        self.enforceUniqueness = enforceUniqueness
+    }
+    
+    @discardableResult func addConnection(_ connection: T) -> Bool {
         cleanUpConnections()
+        
+        if enforceUniqueness {
+            let other = connections.first { (wrapper) -> Bool in
+                guard let obj = wrapper.value else {
+                    return false
+                }
+                
+                return obj === connection
+            }
+            
+            guard other == nil else {
+                return false
+            }
+        }
+        
         connections.append(ConnectionWrapper(value: connection))
+        return true
     }
     
     func removeConnection(_ connectionToRemove: T) {

@@ -64,6 +64,32 @@ final class WeakConnectionSetTests: XCTestCase {
         }
     }
     
+    func testEncorcesUniquenessWhenSet() {
+        let connectionSet = WeakConnectionSequence<TestClass>(enforceUniqueness: true)
+        
+        let element1: TestClass = TestClass(100)
+        let element2: TestClass = TestClass(200)
+        connectionSet.addConnection(element1)
+        
+        XCTAssertEqual(connectionSet.count, 1)
+        XCTAssertFalse(connectionSet.addConnection(element1))
+        XCTAssertTrue(connectionSet.addConnection(element2))
+        XCTAssertEqual(connectionSet.count, 2)
+    }
+    
+    func testDoesNotEncorcesUniquenessWhenNotSet() {
+        let connectionSet = WeakConnectionSequence<TestClass>(enforceUniqueness: false)
+        
+        let element1: TestClass = TestClass(100)
+        let element2: TestClass = TestClass(200)
+        connectionSet.addConnection(element1)
+        
+        XCTAssertEqual(connectionSet.count, 1)
+        XCTAssertTrue(connectionSet.addConnection(element1))
+        XCTAssertTrue(connectionSet.addConnection(element2))
+        XCTAssertEqual(connectionSet.count, 3)
+    }
+    
     static var allTests = [
         ("testAddConnection", testAddConnection)
     ]
