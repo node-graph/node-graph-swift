@@ -130,7 +130,7 @@ final class NodeTests: XCTestCase {
         
         (node.inputs.first(){ $0.key! == "rhs" })!.value = value
         XCTAssertTrue(downstreamDelegateMock.triggered)
-        XCTAssertNotEqual(downStreamInput.value!, result)
+        XCTAssertEqual(downStreamInput.value!, result)
     }
 
     static var allTests = [
