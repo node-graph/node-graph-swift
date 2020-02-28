@@ -73,6 +73,27 @@ protocol Node: NodeInputDelegate {
     func cancel()
 }
 
+extension Node {
+    func canRun() -> Bool {
+        switch inputTrigger {
+        case .noAutomaticProcessing:
+            return false
+        case .any:
+            return inputs.contains() { $0.value != nil }
+        case .all:
+            return !(inputs.contains() { $0.value == nil })
+        case .allAtLeastOnce:
+            // TODO
+            fallthrough
+        case .custom:
+            // TODO - maybe closure?
+            fallthrough
+        @unknown default:
+            return false
+        }
+    }
+}
+
 protocol DescribableNode: Node {
     /**
      Human readable name of the node.
