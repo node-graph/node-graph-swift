@@ -14,7 +14,7 @@ protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
      An example value for this could be the `R` output key in an `RGB` node.
      */
     var key: String? { get }
-    var connections: [NodeInputType] { get set }// TODO: Change to @c WeakSet
+    var connections: WeakConnectionSequence<NodeInputType> { get set }
 
     /**
      Adds a downstream connection from this output to a @c NodeInput.
@@ -37,14 +37,14 @@ class NodeOutput<OutputType: Equatable>: NodeOutputProtocol {
     typealias NodeInputType = NodeInput<ResultType>
 
     var key: String?
-    var connections = [NodeInputType]()
+    var connections = WeakConnectionSequence<NodeInputType>(enforceUniqueness: true)
 
     func addConnection(nodeInput: NodeInputType) {
-        connections.append(nodeInput)
+        connections.addConnection(nodeInput)
     }
 
     func removeConnection(nodeInput: NodeInputType) {
-        connections.removeAll() { $0 == nodeInput }
+        connections.removeConnection(nodeInput)
     }
 
     func send(result: ResultType?) {
