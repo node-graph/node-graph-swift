@@ -91,6 +91,11 @@ final class WeakConnectionSetTests: XCTestCase {
     }
     
     static var allTests = [
-        ("testAddConnection", testAddConnection)
+        ("testAddConnection", testAddConnection),
+        ("testRemoveConnection", testRemoveConnection),
+        ("testNilConnectionIsAutomaticallyRemoved", testNilConnectionIsAutomaticallyRemoved),
+        ("testConnectionSetIsIteratable", testConnectionSetIsIteratable),
+        ("testEncorcesUniquenessWhenSet", testEncorcesUniquenessWhenSet),
+        ("testDoesNotEncorcesUniquenessWhenNotSet", testDoesNotEncorcesUniquenessWhenNotSet)
     ]
 }
