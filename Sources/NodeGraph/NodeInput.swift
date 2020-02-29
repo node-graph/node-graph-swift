@@ -43,7 +43,7 @@ class NodeInput<InputType: Equatable>: NodeInputProtocol {
     weak var delegate: NodeInputDelegate?
     var key: String?
 
-    required init(key: String?, delegate: NodeInputDelegate) {
+    required init(key: String?, delegate: NodeInputDelegate?) {
         self.key = key
         self.delegate = delegate
     }
