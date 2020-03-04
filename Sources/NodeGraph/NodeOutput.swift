@@ -5,7 +5,7 @@ signify what part of the result it carries.
 
 An output has connections as weak references to instances of NodeInput.
 */
-protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
+public protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
     associatedtype ResultType: Equatable
     associatedtype NodeInputType: NodeInputProtocol
 
@@ -13,7 +13,7 @@ protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
      The key of this output, can be nil if the node only has one output.
      An example value for this could be the `R` output key in an `RGB` node.
      */
-    var key: String? { get }
+    var key: String { get }
     var connections: WeakConnectionSequence<NodeInputType> { get set }
 
     /**
@@ -32,22 +32,26 @@ protocol NodeOutputProtocol: class, Hashable { // TODO: Do we need the protocol?
     func send(result: ResultType?)
 }
 
-class NodeOutput<OutputType: Equatable>: NodeOutputProtocol {
-    typealias ResultType = OutputType
-    typealias NodeInputType = NodeInput<ResultType>
+open class NodeOutput<OutputType: Equatable>: NodeOutputProtocol {
+    public typealias ResultType = OutputType
+    public typealias NodeInputType = NodeInput<ResultType>
 
-    var key: String?
-    var connections = WeakConnectionSequence<NodeInputType>(enforceUniqueness: true)
+    public var key: String = ""
+    public var connections = WeakConnectionSequence<NodeInputType>(enforceUniqueness: true)
 
-    func addConnection(nodeInput: NodeInputType) {
+    required public init(key: String) {
+        self.key = key
+    }
+    
+    public func addConnection(nodeInput: NodeInputType) {
         connections.addConnection(nodeInput)
     }
 
-    func removeConnection(nodeInput: NodeInputType) {
+    public func removeConnection(nodeInput: NodeInputType) {
         connections.removeConnection(nodeInput)
     }
 
-    func send(result: ResultType?) {
+    public func send(result: ResultType?) {
         for connection in connections {
             connection.value = result
         }
@@ -55,11 +59,11 @@ class NodeOutput<OutputType: Equatable>: NodeOutputProtocol {
 
     //MARK: - Hashable
 
-    static func == (lhs: NodeOutput, rhs: NodeOutput) -> Bool {
+    public static func == (lhs: NodeOutput, rhs: NodeOutput) -> Bool {
         return lhs === rhs
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(unsafeBitCast(self, to: Int.self))
     }
 }

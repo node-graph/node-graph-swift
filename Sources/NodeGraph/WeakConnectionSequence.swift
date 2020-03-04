@@ -1,8 +1,8 @@
 
 import Foundation
 
-class WeakConnectionSequence<T: AnyObject> {
-    struct WeakConnectionSetIterator: IteratorProtocol {
+public class WeakConnectionSequence<T: AnyObject> {
+    public struct WeakConnectionSetIterator: IteratorProtocol {
         private let connectionSet: WeakConnectionSequence<T>
         private var index = 0
         
@@ -10,7 +10,7 @@ class WeakConnectionSequence<T: AnyObject> {
             self.connectionSet = connectionSet
         }
         
-        mutating func next() -> T? {
+        mutating public func next() -> T? {
             guard index < connectionSet.connections.count else {
                 return nil
             }
@@ -78,7 +78,7 @@ class WeakConnectionSequence<T: AnyObject> {
 }
 
 extension WeakConnectionSequence: Sequence {
-    func makeIterator() -> WeakConnectionSequence.WeakConnectionSetIterator {
+    public func makeIterator() -> WeakConnectionSequence.WeakConnectionSetIterator {
         return WeakConnectionSetIterator(self)
     }
 }
