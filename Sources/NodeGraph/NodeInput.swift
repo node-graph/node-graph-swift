@@ -2,7 +2,7 @@
 /**
  Defines how a node input communicates changes.
  */
-protocol NodeInputDelegate: class {
+public protocol NodeInputDelegate: class {
     func nodeInputDidUpdate<Input: NodeInputProtocol>(_: Input, value:Any?) -> Void
 }
 
@@ -12,7 +12,7 @@ protocol NodeInputDelegate: class {
 
  This class is well suited for subclassing so you can implement inputs for specific types.
 */
-protocol NodeInputProtocol: class, Hashable {
+public protocol NodeInputProtocol: class, Hashable {
     associatedtype ValueType: Equatable
     /**
      The current value of the input. The setter will run the validationBlock before
@@ -28,33 +28,33 @@ protocol NodeInputProtocol: class, Hashable {
     /**
      The optional key of this input for the node.
      */
-    var key: String? { get }
+    var key: String { get }
 }
 
 
-class NodeInput<InputType: Equatable>: NodeInputProtocol {
-    typealias ValueType = InputType
+open class NodeInput<InputType: Equatable>: NodeInputProtocol {
+    public typealias ValueType = InputType
 
-    var value: InputType? {
+    public var value: InputType? {
         didSet {
             delegate?.nodeInputDidUpdate(self, value: value)
         }
     }
-    weak var delegate: NodeInputDelegate?
-    var key: String?
+    weak public var delegate: NodeInputDelegate?
+    public var key: String = ""
 
-    required init(key: String?, delegate: NodeInputDelegate?) {
+    required public init(key: String, delegate: NodeInputDelegate?) {
         self.key = key
         self.delegate = delegate
     }
 
     //MARK: - Hashable
 
-    static func == (lhs: NodeInput, rhs: NodeInput) -> Bool {
+    public static func == (lhs: NodeInput, rhs: NodeInput) -> Bool {
         return lhs === rhs
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(unsafeBitCast(self, to: Int.self))
     }
 }

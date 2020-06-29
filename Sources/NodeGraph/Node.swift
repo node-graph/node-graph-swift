@@ -2,7 +2,7 @@
 /**
  Decides what inputs need to be set in order for a node to process.
  */
-enum NodeInputTrigger: Int, Codable {
+public enum NodeInputTrigger: Int, Codable {
     /// The node does not automatically process anything, you manually have to call the -process method.
     case noAutomaticProcessing
     /// Process as soon as any input is set.
@@ -38,7 +38,7 @@ enum NodeInputTrigger: Int, Codable {
         24
 
  */
-protocol Node: NodeInputDelegate {
+public protocol Node: NodeInputDelegate {
     associatedtype NodeInputType: NodeInputProtocol
     associatedtype NodeOutputType: NodeOutputProtocol
     /**
@@ -74,7 +74,7 @@ protocol Node: NodeInputDelegate {
 }
 
 extension Node {
-    func canRun() -> Bool {
+    public func canRun() -> Bool {
         switch inputTrigger {
         case .noAutomaticProcessing:
             return false
@@ -92,9 +92,17 @@ extension Node {
             return false
         }
     }
+    
+    public func input(forKey key: String) -> NodeInputType? {
+        return (inputs.first(){ $0.key == key })
+    }
+    
+    public func output(forKey key: String) -> NodeOutputType? {
+        return (outputs.first(){ $0.key == key })
+    }
 }
 
-protocol DescribableNode: Node {
+public protocol DescribableNode: Node {
     /**
      Human readable name of the node.
      */

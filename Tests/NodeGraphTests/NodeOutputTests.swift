@@ -4,7 +4,7 @@ import XCTest
 final class NodeOutputTests: XCTestCase {
     
     func testAddingConnection() {
-        let output = NodeOutput<Int>()
+        let output = NodeOutput<Int>(key: "output")
         let input = NodeInput<Int>(key: "input", delegate: nil)
         
         output.addConnection(nodeInput: input)
@@ -12,7 +12,7 @@ final class NodeOutputTests: XCTestCase {
     }
     
     func testRemovingConnection() {
-        let output = NodeOutput<Int>()
+        let output = NodeOutput<Int>(key: "output")
         let input = NodeInput<Int>(key: "input", delegate: nil)
             
         output.addConnection(nodeInput: input)
@@ -23,8 +23,8 @@ final class NodeOutputTests: XCTestCase {
     }
     
     func testEquality() {
-        let output1 = NodeOutput<Int>()
-        let output2 = NodeOutput<Int>()
+        let output1 = NodeOutput<Int>(key: "output")
+        let output2 = NodeOutput<Int>(key: "output")
         
         XCTAssertTrue(output1 == output1)
         XCTAssertFalse(output1 == output2)
