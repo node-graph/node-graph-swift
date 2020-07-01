@@ -15,25 +15,32 @@ class AddNodeMock: Node {
 
     var inputTrigger: NodeInputTrigger
 
-    private(set) var inputs: Set<NodeInput<Int>>
-    private(set) var outputs: Set<NodeOutput<Int>>
+    public let inputs: [NodeInputProtocol]
+    private(set) var outputs = Set<NodeOutput<Int>>()
 
+    let lhs: NodeInput<Int>
+    let rhs: NodeInput<Int>
+    
     init() {
-        inputs = Set()
-        outputs = Set()
         inputTrigger = .all
         
-        inputs.insert(NodeInput<Int>(key: "lhs", delegate: self))
-        inputs.insert(NodeInput<Int>(key: "rhs", delegate: self))
-
+        lhs = NodeInput<Int>(key: "lhs", delegate: nil)
+        rhs = NodeInput<Int>(key: "rhs", delegate: nil)
+        inputs = [lhs, rhs]
+        
+        lhs.delegate = self
+        rhs.delegate = self
+        
         outputs.insert(NodeOutput<Int>(key: "output"))
+        
+        
     }
     
     func process() {
-        let lhs = input(forKey: "lhs")?.value ?? 0
-        let rhs = input(forKey: "rhs")?.value ?? 0
+        let lhsValue = lhs.value ?? 0
+        let rhsValue = rhs.value ?? 0
         
-        outputs.first!.send(result: lhs + rhs)
+        outputs.first!.send(result: lhsValue + rhsValue)
     }
 
     func cancel() {
@@ -86,10 +93,9 @@ final class NodeTests: XCTestCase {
             output.addConnection(nodeInput: downStreamInput)
         }
         
-        for input in node.inputs {
-            input.value = 12
-        }
-        
+        node.rhs.value = 12
+        node.lhs.value = 12
+    
         XCTAssertFalse(downstreamDelegateMock.triggered)
     }
     
@@ -105,7 +111,7 @@ final class NodeTests: XCTestCase {
             output.addConnection(nodeInput: downStreamInput)
         }
         
-        node.input(forKey: "lhs")!.value = value
+        node.lhs.value = value
         
         XCTAssertTrue(downstreamDelegateMock.triggered)
         XCTAssertEqual(downStreamInput.value!, value)
@@ -124,10 +130,10 @@ final class NodeTests: XCTestCase {
             output.addConnection(nodeInput: downStreamInput)
         }
         
-        node.input(forKey: "lhs")!.value = value
+        node.lhs.value = value
         XCTAssertFalse(downstreamDelegateMock.triggered)
         
-        node.input(forKey: "rhs")!.value = value
+        node.rhs.value = value
         XCTAssertTrue(downstreamDelegateMock.triggered)
         XCTAssertEqual(downStreamInput.value!, result)
     }
