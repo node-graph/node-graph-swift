@@ -6,13 +6,22 @@ public protocol NodeInputDelegate: class {
     func nodeInputDidUpdate<Input: NodeInputProtocol>(_: Input, value:Any?) -> Void
 }
 
+public protocol NodeInputProtocol: class {
+    /**
+     The key of this input for the node.
+     */
+    var key: String { get }
+    
+    var hasValue: Bool { get }
+}
+
 /**
  A type of input for a \c Node. This decides what type of input a node can accept.
  A node can accept more than one input by defining more of these.
 
  This class is well suited for subclassing so you can implement inputs for specific types.
 */
-public protocol NodeInputProtocol: class, Hashable {
+public protocol TypedInputProtocol: NodeInputProtocol {
     associatedtype ValueType: Equatable
     /**
      The current value of the input. The setter will run the validationBlock before
@@ -24,11 +33,6 @@ public protocol NodeInputProtocol: class, Hashable {
      The node that this input belongs to. Receives events regarding input changes.
      */
     var delegate: NodeInputDelegate? { get }
-
-    /**
-     The optional key of this input for the node.
-     */
-    var key: String { get }
 }
 
 
@@ -42,6 +46,10 @@ open class NodeInput<InputType: Equatable>: NodeInputProtocol {
     }
     weak public var delegate: NodeInputDelegate?
     public var key: String = ""
+    
+    public var hasValue: Bool {
+        return value != nil
+    }
 
     required public init(key: String, delegate: NodeInputDelegate?) {
         self.key = key

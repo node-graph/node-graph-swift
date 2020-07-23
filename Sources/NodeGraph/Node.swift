@@ -39,7 +39,6 @@ public enum NodeInputTrigger: Int, Codable {
 
  */
 public protocol Node: NodeInputDelegate {
-    associatedtype NodeInputType: NodeInputProtocol
     associatedtype NodeOutputType: NodeOutputProtocol
     /**
      Specifies what inputs need to be set in order for the node to process.
@@ -50,7 +49,7 @@ public protocol Node: NodeInputDelegate {
      The inputs of this node, inputs do not reference upstream nodes but keeps a
      result from an upstream node that this node can use when @c -process is called.
      */
-    var inputs: Set<NodeInputType> { get }
+    var inputs: [NodeInputProtocol] { get }
 
     /**
      All downstream connections out from this node. When -process is run the result
@@ -79,9 +78,9 @@ extension Node {
         case .noAutomaticProcessing:
             return false
         case .any:
-            return inputs.contains() { $0.value != nil }
+            return inputs.contains() { $0.hasValue }
         case .all:
-            return !(inputs.contains() { $0.value == nil })
+            return !(inputs.contains() { !$0.hasValue })
         case .allAtLeastOnce:
             // TODO
             fallthrough
@@ -93,7 +92,7 @@ extension Node {
         }
     }
     
-    public func input(forKey key: String) -> NodeInputType? {
+    public func input(forKey key: String) -> NodeInputProtocol? {
         return (inputs.first(){ $0.key == key })
     }
     
